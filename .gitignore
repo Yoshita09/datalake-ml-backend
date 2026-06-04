@@ -27,6 +27,7 @@ __pycache__/
 models/*.keras
 models/*.h5
 models/*.npy
+models/*.pth
 
 # tensorflow cache
 *.pb

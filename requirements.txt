@@ -5,3 +5,5 @@ opencv-python
 mediapipe
 numpy
 python-multipart
+torch
+torchvision
