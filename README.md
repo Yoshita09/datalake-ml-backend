@@ -2,59 +2,47 @@
 
 ## Overview
 
-DataLake ML Backend is a FastAPI-based AI verification service responsible for liveness detection and facial verification for attendance marking.
+DataLake ML Backend is a FastAPI-based AI verification service responsible for validating attendance through multiple computer vision pipelines.
 
-The backend exposes REST APIs that process image frames captured by the mobile application and return verification results.
-
----
-
-## Features
-
-### Face Recognition
-
-Uses:
-
-* InsightFace
-* ONNX Runtime
-* PyTorch
-
-### Blink Detection
-
-Uses:
-
-* MediaPipe Face Mesh
-* Eye Aspect Ratio (EAR)
-
-### Head Movement Detection
-
-Uses:
-
-* MediaPipe Face Mesh
-* Session-Based State Machine
-
-### FastAPI REST APIs
-
-* /blink-detection
-* /head-movement
-* /face-recognition
+The backend provides secure liveness verification and facial authentication services that integrate directly with the DataLake 3.0 mobile application.
 
 ---
 
-## Tech Stack
+## AI Verification Pipeline
 
-| Component        | Version |
-| ---------------- | ------- |
-| Python           | 3.10.18 |
-| FastAPI          | Latest  |
-| Uvicorn          | Latest  |
-| TensorFlow       | 2.15.0  |
-| TensorFlow Metal | Latest  |
-| MediaPipe        | 0.10.14 |
-| PyTorch          | Latest  |
-| InsightFace      | Latest  |
-| ONNX Runtime     | Latest  |
-| OpenCV           | Latest  |
-| NumPy            | < 2.0   |
+### Stage 1
+
+Head Movement Verification
+
+Ensures the user performs required head movements and is physically present.
+
+### Stage 2
+
+Blink Detection
+
+Confirms liveness through eye blink analysis.
+
+### Stage 3
+
+Face Recognition
+
+Validates identity using facial embeddings.
+
+---
+
+## Technology Stack
+
+| Layer            | Technology      |
+| ---------------- | --------------- |
+| API Framework    | FastAPI         |
+| Web Server       | Uvicorn         |
+| Computer Vision  | OpenCV          |
+| Face Mesh        | MediaPipe       |
+| Face Recognition | InsightFace     |
+| Deep Learning    | TensorFlow 2.15 |
+| Model Runtime    | ONNX Runtime    |
+| Neural Networks  | PyTorch         |
+| Data Processing  | NumPy           |
 
 ---
 
@@ -91,50 +79,11 @@ app/
 POST /blink-detection
 ```
 
-Request
-
-```json
-{
-  "frame": "base64_encoded_frame"
-}
-```
-
-Response
-
-```json
-{
-  "success": true,
-  "blink_count": 1
-}
-```
-
----
-
-### Head Movement Detection
+### Head Movement Verification
 
 ```http
 POST /head-movement
 ```
-
-Request
-
-```json
-{
-  "frame": "base64_encoded_frame",
-  "session_id": "abc123"
-}
-```
-
-Response
-
-```json
-{
-  "success": true,
-  "stage": "verified"
-}
-```
-
----
 
 ### Face Recognition
 
@@ -142,28 +91,17 @@ Response
 POST /face-recognition
 ```
 
-Request
-
-```json
-{
-  "frame": "base64_encoded_frame"
-}
-```
-
-Response
-
-```json
-{
-  "success": true,
-  "confidence": 0.97
-}
-```
-
 ---
 
-## Run Locally
+## Installation
 
-### Create Virtual Environment
+### Python Version
+
+```text
+Python 3.10.18
+```
+
+### Create Environment
 
 ```bash
 python3.10 -m venv venv
@@ -176,41 +114,38 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### Start Server
+---
 
-```bash
-uvicorn main:app --reload
-```
+## Required Models
 
-Server:
+Place model files:
 
 ```text
-http://localhost:8000
+models/
+├── blink_eye.keras
+└── head_movement.pth
 ```
 
 ---
 
-## Production Deployment
+## Run Server
 
-Recommended:
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
 
-* Railway
-* Render
-* AWS EC2
-* Azure App Service
+Swagger Documentation:
 
----
-
-## Security Recommendations
-
-* Restrict CORS Origins
-* Enable Authentication
-* HTTPS Only
-* Rate Limiting
-* Request Validation
+```text
+http://localhost:8000/docs
+```
 
 ---
 
-## License
+## Security Features
 
-MIT License
+* Multi-step Verification
+* Liveness Detection
+* Anti-Spoofing Checks
+* Facial Authentication
+* Modular ML Pipeline
